@@ -1,5 +1,6 @@
 package dev.rohankumar.blog.payload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 @Getter
