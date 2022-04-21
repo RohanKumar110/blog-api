@@ -5,6 +5,7 @@ import dev.rohankumar.blog.exception.UserNotFoundException;
 import dev.rohankumar.blog.payload.UserDTO;
 import dev.rohankumar.blog.repository.UserRepository;
 import dev.rohankumar.blog.service.interfaces.IUserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
@@ -15,10 +16,12 @@ import java.util.List;
 @Transactional
 public class UserService implements IUserService {
 
+    private final ModelMapper mapper;
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(ModelMapper mapper, UserRepository userRepository) {
+        this.mapper = mapper;
         this.userRepository = userRepository;
     }
 
@@ -66,23 +69,11 @@ public class UserService implements IUserService {
 
     private UserDTO mapToDTO(User user) {
 
-        return UserDTO.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .build();
+        return this.mapper.map(user,UserDTO.class);
     }
 
     private User mapToUser(UserDTO userDTO) {
 
-        return User.builder()
-                .id(userDTO.getId())
-                .name(userDTO.getName())
-                .email(userDTO.getEmail())
-                .username(userDTO.getUsername())
-                .password(userDTO.getPassword())
-                .build();
+       return this.mapper.map(userDTO,User.class);
     }
 }

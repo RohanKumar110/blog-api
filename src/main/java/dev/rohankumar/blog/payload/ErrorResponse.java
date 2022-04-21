@@ -1,8 +1,11 @@
 package dev.rohankumar.blog.payload;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ErrorResponse {
 
@@ -10,6 +13,8 @@ public class ErrorResponse {
     private HttpStatus httpStatus;
     private String reason;
     private String message;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Map<String,String> errors;
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd-MM-yyyy hh:mm:ss",timezone = "Asia/Karachi")
     private LocalDateTime timeStamp;
 
@@ -55,6 +60,14 @@ public class ErrorResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Map<String, String> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(Map<String, String> errors) {
+        this.errors = errors;
     }
 
     public LocalDateTime getTimeStamp() {
