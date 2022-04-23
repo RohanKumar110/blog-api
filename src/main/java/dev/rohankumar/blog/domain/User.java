@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -26,4 +27,6 @@ public class User {
     @Column(nullable = false,length = 50)
     private String password;
     private LocalDateTime joinDate;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private Set<Post> posts;
 }

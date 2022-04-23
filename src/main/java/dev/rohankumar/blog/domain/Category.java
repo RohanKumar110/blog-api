@@ -3,6 +3,7 @@ package dev.rohankumar.blog.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "categories")
@@ -18,6 +19,8 @@ public class Category {
     private Long id;
     @Column(nullable = false,length = 100)
     private String title;
-    @Column(nullable = true,length = 100)
+    @Column(nullable = true,length = 255)
     private String description;
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
+    private Set<Post> posts;
 }
