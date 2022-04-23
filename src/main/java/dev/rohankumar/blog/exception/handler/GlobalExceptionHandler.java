@@ -1,5 +1,6 @@
 package dev.rohankumar.blog.exception.handler;
 
+import dev.rohankumar.blog.exception.CategoryNotFoundException;
 import dev.rohankumar.blog.exception.UserNotFoundException;
 import dev.rohankumar.blog.payload.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex) {
         ErrorResponse error = createErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCategoryNotFoundException(CategoryNotFoundException ex){
+        ErrorResponse error = createErrorResponse(HttpStatus.NOT_FOUND,ex.getMessage());
+        return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
