@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import static dev.rohankumar.blog.constants.ErrorConstant.USER_NOT_FOUND;
 
 @Service
 @Transactional
@@ -51,7 +52,7 @@ public class UserService implements IUserService {
     @Override
     public UserDTO update(Long id, UserDTO userDTO) {
         User foundUser = this.userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: "+id));
+                .orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND,id)));
         foundUser.setName(userDTO.getName());
         foundUser.setEmail(userDTO.getEmail());
         foundUser.setUsername(userDTO.getUsername());

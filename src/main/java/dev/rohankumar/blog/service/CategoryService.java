@@ -8,9 +8,9 @@ import dev.rohankumar.blog.service.interfaces.ICategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.util.List;
+import static dev.rohankumar.blog.constants.ErrorConstant.CATEGORY_NOT_FOUND;
 
 @Service
 @Transactional
@@ -35,7 +35,7 @@ public class CategoryService implements ICategoryService {
     @Override
     public CategoryDTO find(Long id) {
         Category category = this.categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: "+id));
+                .orElseThrow(() -> new CategoryNotFoundException(String.format(CATEGORY_NOT_FOUND,id)));
         return mapToDTO(category);
     }
 

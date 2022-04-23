@@ -41,7 +41,7 @@ public class CategoryResource {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<CategoryDTO> update(@Valid @PathVariable Long id,@RequestBody CategoryDTO categoryDTO){
+    public ResponseEntity<CategoryDTO> update(@PathVariable Long id,@Valid @RequestBody CategoryDTO categoryDTO){
         CategoryDTO updatedCategory = this.categoryService.update(id,categoryDTO);
         return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
     }
