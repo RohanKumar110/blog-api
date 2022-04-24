@@ -97,12 +97,20 @@ public class PostService implements IPostService {
 
     @Override
     public PostDTO update(Long id, PostDTO postDTO) {
-        return null;
+        Post post = this.postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(String.format(POST_NOT_FOUND,id)));
+        post.setTitle(postDTO.getTitle());
+        post.setBody(postDTO.getBody());
+        post.setImageUrl(post.getImageUrl());
+        Post updatedPost = this.postRepository.save(post);
+        return mapToDTO(updatedPost);
     }
 
     @Override
     public void delete(Long id) {
-
+        Post post = this.postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(String.format(POST_NOT_FOUND,id)));
+        this.postRepository.delete(post);
     }
 
     private Post mapToPost(PostDTO postDTO) {

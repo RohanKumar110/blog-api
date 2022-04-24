@@ -1,9 +1,9 @@
 package dev.rohankumar.blog.payload;
 
-import dev.rohankumar.blog.domain.Category;
-import dev.rohankumar.blog.domain.User;
 import lombok.*;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Setter
@@ -14,7 +14,11 @@ import java.time.LocalDateTime;
 public class PostDTO {
 
     private Long id;
+    @NotEmpty(message = "Title cannot be empty")
+    @Size(min = 3,max = 100,message = "Title should be greater than or equal to 3 characters")
     private String title;
+    @NotEmpty(message = "Body cannot be empty")
+    @Size(min = 10,message = "Body should be greater than or equal to 10 characters")
     private String body;
     private String imageUrl;
     private LocalDateTime createdAt;
