@@ -47,15 +47,15 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public PostResponse find(int pageNo, int pageSize,String sortBy,String sortDir) {
+    public PostResponse find(int pageNo, int pageSize, String sortBy, String sortDir) {
 
-        Sort sort ;
-        if(sortDir.equalsIgnoreCase("asc"))
+        Sort sort;
+        if (sortDir.equalsIgnoreCase("asc"))
             sort = Sort.by(sortBy).ascending();
         else
             sort = Sort.by(sortBy).descending();
 
-        Pageable pageable = PageRequest.of(pageNo, pageSize,sort);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Post> page = this.postRepository.findAll(pageable);
         List<PostDTO> posts = page.getContent()
                 .stream().map(this::mapToDTO)
@@ -73,8 +73,11 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public List<PostDTO> find(String name) {
-        return null;
+    public List<PostDTO> find(String title) {
+        List<Post> posts = this.postRepository.searchByTitle("%"+title+"%");
+        return posts.stream()
+                .map(this::mapToDTO)
+                .toList();
     }
 
     @Override

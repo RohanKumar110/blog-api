@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 
@@ -30,8 +29,15 @@ public class PostResource {
             @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
     ) {
-        PostResponse postResponse = this.postService.find(pageNo, pageSize, sortBy,sortDir);
+        PostResponse postResponse = this.postService.find(pageNo, pageSize, sortBy, sortDir);
         return new ResponseEntity<>(postResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/posts/search/{title}")
+    public ResponseEntity<List<PostDTO>> search(
+            @PathVariable String title) {
+        List<PostDTO> posts = this.postService.find(title);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @GetMapping("/posts/{id}")
