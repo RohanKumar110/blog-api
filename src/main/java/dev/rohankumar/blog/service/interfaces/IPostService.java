@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IPostService {
 
-    PostResponse find(int pageNo, int pageSize);
+    PostResponse find(int pageNo, int pageSize,String sortBy,String sortDir);
     List<PostDTO> find(String name);
     List<PostDTO> findByCategory(Long id);
     List<PostDTO> findByUser(Long id);

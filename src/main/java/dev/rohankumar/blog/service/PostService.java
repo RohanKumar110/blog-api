@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -46,8 +47,15 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public PostResponse find(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
+    public PostResponse find(int pageNo, int pageSize,String sortBy,String sortDir) {
+
+        Sort sort ;
+        if(sortDir.equalsIgnoreCase("asc"))
+            sort = Sort.by(sortBy).ascending();
+        else
+            sort = Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize,sort);
         Page<Post> page = this.postRepository.findAll(pageable);
         List<PostDTO> posts = page.getContent()
                 .stream().map(this::mapToDTO)
