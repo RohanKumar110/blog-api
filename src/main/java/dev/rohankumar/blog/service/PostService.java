@@ -7,14 +7,16 @@ import dev.rohankumar.blog.exception.CategoryNotFoundException;
 import dev.rohankumar.blog.exception.PostNotFoundException;
 import dev.rohankumar.blog.exception.UserNotFoundException;
 import dev.rohankumar.blog.payload.PostDTO;
+import dev.rohankumar.blog.payload.PostResponse;
 import dev.rohankumar.blog.repository.CategoryRepository;
 import dev.rohankumar.blog.repository.PostRepository;
 import dev.rohankumar.blog.repository.UserRepository;
-import dev.rohankumar.blog.service.interfaces.ICategoryService;
 import dev.rohankumar.blog.service.interfaces.IPostService;
-import dev.rohankumar.blog.service.interfaces.IUserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -44,10 +46,22 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public List<PostDTO> find() {
-        return this.postRepository.findAll()
+    public PostResponse find(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Post> page = this.postRepository.findAll(pageable);
+        List<PostDTO> posts = page.getContent()
                 .stream().map(this::mapToDTO)
                 .toList();
+        return PostResponse.builder()
+                .pageNo(page.getNumber())
+                .pageSize(page.getSize())
+                .firstPage(page.isFirst())
+                .lastPage(page.isLast())
+                .hasNext(page.hasNext())
+                .posts(posts)
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
+                .build();
     }
 
     @Override
@@ -59,7 +73,7 @@ public class PostService implements IPostService {
     public List<PostDTO> findByCategory(Long id) {
 
         Category category = this.categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException(String.format(CATEGORY_NOT_FOUND,id)));
+                .orElseThrow(() -> new CategoryNotFoundException(String.format(CATEGORY_NOT_FOUND, id)));
         return this.postRepository.findByCategory(category)
                 .stream().map(this::mapToDTO)
                 .toList();
@@ -68,7 +82,7 @@ public class PostService implements IPostService {
     @Override
     public List<PostDTO> findByUser(Long id) {
         User user = this.userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND,id)));
+                .orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND, id)));
         return this.postRepository.findByUser(user)
                 .stream().map(this::mapToDTO)
                 .toList();
@@ -77,7 +91,7 @@ public class PostService implements IPostService {
     @Override
     public PostDTO find(Long id) {
         Post post = this.postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException(String.format(POST_NOT_FOUND,id)));
+                .orElseThrow(() -> new PostNotFoundException(String.format(POST_NOT_FOUND, id)));
         return mapToDTO(post);
     }
 
@@ -85,9 +99,9 @@ public class PostService implements IPostService {
     public PostDTO create(Long userId, Long categoryId, PostDTO postDTO) {
         Post post = mapToPost(postDTO);
         User user = this.userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND,userId)));
+                .orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND, userId)));
         Category category = this.categoryRepository.findById(userId)
-                .orElseThrow(() -> new CategoryNotFoundException(String.format(CATEGORY_NOT_FOUND,categoryId)));
+                .orElseThrow(() -> new CategoryNotFoundException(String.format(CATEGORY_NOT_FOUND, categoryId)));
         post.setUser(user);
         post.setCategory(category);
         post.setCreatedAt(LocalDateTime.now());
@@ -98,7 +112,7 @@ public class PostService implements IPostService {
     @Override
     public PostDTO update(Long id, PostDTO postDTO) {
         Post post = this.postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException(String.format(POST_NOT_FOUND,id)));
+                .orElseThrow(() -> new PostNotFoundException(String.format(POST_NOT_FOUND, id)));
         post.setTitle(postDTO.getTitle());
         post.setBody(postDTO.getBody());
         post.setImageUrl(post.getImageUrl());
@@ -109,7 +123,7 @@ public class PostService implements IPostService {
     @Override
     public void delete(Long id) {
         Post post = this.postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException(String.format(POST_NOT_FOUND,id)));
+                .orElseThrow(() -> new PostNotFoundException(String.format(POST_NOT_FOUND, id)));
         this.postRepository.delete(post);
     }
 
