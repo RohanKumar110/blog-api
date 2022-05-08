@@ -49,7 +49,7 @@ public class CategoryService implements ICategoryService {
     @Override
     public CategoryDTO update(Long id, CategoryDTO categoryDTO) {
         Category foundCategory = this.categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: "+id));
+                .orElseThrow(() -> new CategoryNotFoundException(String.format(CATEGORY_NOT_FOUND,id)));
         foundCategory.setTitle(categoryDTO.getTitle());
         foundCategory.setDescription(categoryDTO.getDescription());
         Category updatedCategory = this.categoryRepository.save(foundCategory);
@@ -59,7 +59,7 @@ public class CategoryService implements ICategoryService {
     @Override
     public void delete(Long id) {
         Category foundCategory = this.categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: "+id));
+                .orElseThrow(() -> new CategoryNotFoundException(String.format(CATEGORY_NOT_FOUND,id)));
         this.categoryRepository.delete(foundCategory);
     }
 

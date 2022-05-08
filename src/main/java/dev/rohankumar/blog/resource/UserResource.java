@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static dev.rohankumar.blog.constants.MessageConstant.USER_DELETED_MSG;
+
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserResource {
@@ -49,7 +51,7 @@ public class UserResource {
     @DeleteMapping("{id}")
     public ResponseEntity<HttpResponse> delete(@PathVariable Long id){
         this.userService.delete(id);
-        HttpResponse response = new HttpResponse(HttpStatus.NO_CONTENT.value(),"User Deleted with id: "+id,true);
+        HttpResponse response = new HttpResponse(HttpStatus.NO_CONTENT.value(),String.format(USER_DELETED_MSG,id),true);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

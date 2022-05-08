@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static dev.rohankumar.blog.constants.MessageConstant.CATEGORY_DELETED_MSG;
+
 @RestController
 @RequestMapping("/api/v1/categories")
 public class CategoryResource {
@@ -49,7 +51,7 @@ public class CategoryResource {
     @DeleteMapping("{id}")
     public ResponseEntity<HttpResponse> delete(@PathVariable Long id){
         this.categoryService.delete(id);
-        HttpResponse response = new HttpResponse(HttpStatus.NO_CONTENT.value(),"Category Deleted with id: "+id,true);
+        HttpResponse response = new HttpResponse(HttpStatus.NO_CONTENT.value(),String.format(CATEGORY_DELETED_MSG,id),true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

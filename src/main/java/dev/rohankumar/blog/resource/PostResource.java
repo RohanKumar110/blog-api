@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static dev.rohankumar.blog.constants.MessageConstant.POST_DELETED_MSG;
+import static dev.rohankumar.blog.constants.AppConstant.*;
+
 @RestController
 @RequestMapping("/api/v1/")
 public class PostResource {
@@ -24,10 +27,10 @@ public class PostResource {
 
     @GetMapping("/posts")
     public ResponseEntity<PostResponse> getAll(
-            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+            @RequestParam(value = "pageNo", defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = DEFAULT_SORT_DIR, required = false) String sortDir
     ) {
         PostResponse postResponse = this.postService.find(pageNo, pageSize, sortBy, sortDir);
         return new ResponseEntity<>(postResponse, HttpStatus.OK);
@@ -76,7 +79,7 @@ public class PostResource {
     @DeleteMapping("/posts/{id}")
     public ResponseEntity<HttpResponse> delete(@PathVariable Long id) {
         this.postService.delete(id);
-        HttpResponse response = new HttpResponse(HttpStatus.NO_CONTENT.value(), "Post Deleted with id: " + id, true);
+        HttpResponse response = new HttpResponse(HttpStatus.NO_CONTENT.value(),String.format(POST_DELETED_MSG,id) , true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

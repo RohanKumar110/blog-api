@@ -37,7 +37,7 @@ public class UserService implements IUserService {
     @Override
     public UserDTO find(Long id) {
         User user = this.userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: "+id));
+                .orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND,id)));
         return mapToDTO(user);
     }
 
@@ -64,7 +64,7 @@ public class UserService implements IUserService {
     @Override
     public void delete(Long id) {
         User foundUser = this.userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: "+id));
+                .orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND,id)));
         this.userRepository.delete(foundUser);
     }
 
