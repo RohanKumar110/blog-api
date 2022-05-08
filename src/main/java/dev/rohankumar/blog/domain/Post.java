@@ -20,7 +20,7 @@ public class Post {
     private String title;
     @Column(nullable = false,length = 10000)
     private String body;
-    private String imageUrl;
+    private String imageName;
     @Column(updatable = false,nullable = false)
     private LocalDateTime createdAt;
     @ManyToOne

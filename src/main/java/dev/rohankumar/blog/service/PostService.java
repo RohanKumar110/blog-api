@@ -11,6 +11,7 @@ import dev.rohankumar.blog.payload.PostResponse;
 import dev.rohankumar.blog.repository.CategoryRepository;
 import dev.rohankumar.blog.repository.PostRepository;
 import dev.rohankumar.blog.repository.UserRepository;
+import dev.rohankumar.blog.service.interfaces.IFileService;
 import dev.rohankumar.blog.service.interfaces.IPostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,16 +34,19 @@ import static dev.rohankumar.blog.constants.ErrorConstant.*;
 public class PostService implements IPostService {
 
     private final ModelMapper mapper;
+    private final IFileService fileService;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
 
     @Autowired
     public PostService(ModelMapper mapper,
+                       IFileService fileService,
                        UserRepository userRepository,
                        PostRepository postRepository,
                        CategoryRepository categoryRepository) {
         this.mapper = mapper;
+        this.fileService = fileService;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.categoryRepository = categoryRepository;
@@ -126,7 +132,7 @@ public class PostService implements IPostService {
                 .orElseThrow(() -> new PostNotFoundException(String.format(POST_NOT_FOUND, id)));
         post.setTitle(postDTO.getTitle());
         post.setBody(postDTO.getBody());
-        post.setImageUrl(post.getImageUrl());
+        post.setImageName(post.getImageName());
         Post updatedPost = this.postRepository.save(post);
         return mapToDTO(updatedPost);
     }
@@ -136,6 +142,24 @@ public class PostService implements IPostService {
         Post post = this.postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(String.format(POST_NOT_FOUND, id)));
         this.postRepository.delete(post);
+    }
+
+    @Override
+    public PostDTO uploadPostImage(Long id,MultipartFile file) throws IOException {
+        Post post = this.postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(String.format(POST_NOT_FOUND, id)));
+        String fileName = this.fileService.saveFile(file);
+        if(fileName != null){
+            post.setImageName(fileName);
+            Post updatedPost = this.postRepository.save(post);
+            return mapToDTO(updatedPost);
+        }
+        return null;
+    }
+
+    @Override
+    public byte[] getPostImage(String fileName) throws IOException {
+        return this.fileService.getFile(fileName);
     }
 
     private Post mapToPost(PostDTO postDTO) {

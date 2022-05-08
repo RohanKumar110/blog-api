@@ -8,11 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 import static dev.rohankumar.blog.constants.MessageConstant.POST_DELETED_MSG;
 import static dev.rohankumar.blog.constants.AppConstant.*;
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -61,12 +65,24 @@ public class PostResource {
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
-    @PostMapping("user/{userId}/category/{categoryId}/posts")
+    @GetMapping(value = "/post/image/{imageName}",produces = IMAGE_JPEG_VALUE)
+    public byte[] getImage(@PathVariable String imageName) throws IOException {
+        return this.postService.getPostImage(imageName);
+    }
+
+    @PostMapping("/user/{userId}/category/{categoryId}/posts")
     public ResponseEntity<PostDTO> create(@PathVariable Long userId,
                                           @PathVariable Long categoryId,
                                           @Valid @RequestBody PostDTO postDTO) {
         PostDTO savedPost = this.postService.create(userId, categoryId, postDTO);
         return new ResponseEntity<>(savedPost, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/post/{id}/image")
+    public ResponseEntity<PostDTO> uploadImage(@PathVariable Long id,
+                                               @RequestParam("image") MultipartFile image) throws IOException {
+        PostDTO updatedPost = this.postService.uploadPostImage(id,image);
+        return new ResponseEntity<>(updatedPost, HttpStatus.OK);
     }
 
     @PutMapping("/posts/{id}")

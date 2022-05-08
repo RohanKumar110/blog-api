@@ -1,8 +1,6 @@
 package dev.rohankumar.blog.exception.handler;
 
-import dev.rohankumar.blog.exception.CategoryNotFoundException;
-import dev.rohankumar.blog.exception.PostNotFoundException;
-import dev.rohankumar.blog.exception.UserNotFoundException;
+import dev.rohankumar.blog.exception.*;
 import dev.rohankumar.blog.payload.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +34,21 @@ public class GlobalExceptionHandler {
         ErrorResponse error = createErrorResponse(HttpStatus.NOT_FOUND,ex.getMessage());
         return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ImageNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleImageNotFoundException(ImageNotFoundException ex){
+        ErrorResponse error = createErrorResponse(HttpStatus.NOT_FOUND,ex.getMessage());
+        return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotAnImageFileException.class)
+    public ResponseEntity<ErrorResponse> handleNotAnImageFileException(NotAnImageFileException ex){
+        ErrorResponse error = createErrorResponse(HttpStatus.BAD_REQUEST,ex.getMessage());
+        return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
+    }
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -20,7 +20,7 @@ public class PostDTO {
     @NotEmpty(message = "Body cannot be empty")
     @Size(min = 10,message = "Body should be greater than or equal to 10 characters")
     private String body;
-    private String imageUrl;
+    private String imageName;
     private LocalDateTime createdAt;
     private CategoryDTO category;
     private UserDTO user;
